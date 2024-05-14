@@ -34,72 +34,48 @@ import gif28 from './assets/28.gif'; // Import your GIF file
 import gif29 from './assets/29.gif'; // Import your GIF file
 import gif30 from './assets/30.gif'; // Import your GIF file
 
-
-
-
 const Animation = ({ numbers }) => {
-
-    const gifSource = [gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10, gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20, gif21, gif22, gif23, gif24, gif25, gif26, gif27, gif28, gif29, gif30];
+    const gifSource = [
+        gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10,
+        gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20,
+        gif21, gif22, gif23, gif24, gif25, gif26, gif27, gif28, gif29, gif30
+    ];
 
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [showGif, setShowGif] = useState(false);
-    const [currentGifIndex, setCurrentGifIndex] = useState(0);
-    // const [gifSource, setGifSource] = useState('');
+    const [gifIndex, setGifIndex] = useState(0);
 
     const videoRef = useRef(null);
 
-    // Function to handle video end event
-    // Function to handle video end event
-    const handleVideoEnded = () => {
-        setIsVideoPlaying(false); // Pause the video
-        setShowGif(true); // Show the GIF animation
-
-        setTimeout(() => {
-            setCurrentGifIndex(numbers[0] - 1);
-        }, 3000 * 1);
-
-
-        setTimeout(() => {
-            setCurrentGifIndex(numbers[1] - 1);
-        }, 3000 * 2);
-
-        setTimeout(() => {
-            setCurrentGifIndex(numbers[2] - 1);
-        }, 3000 * 3);
-
-        setTimeout(() => {
-            setCurrentGifIndex(numbers[3] - 1);
-        }, 3000 * 4);
-
-        setTimeout(() => {
-            setCurrentGifIndex(numbers[4] - 1);
-        }, 3000 * 5);
-
-        setTimeout(() => {
-            setCurrentGifIndex(numbers[5] - 1);
-        }, 3000 * 6);
-
-        setTimeout(() => {
-            setShowGif(false);
-        }, 3000 * 7);
-
-    };
-
-    // Function to handle button click to start animation
-    const handleStartAnimation = () => {
-        setIsVideoPlaying(true); // Start playing the video
-        setShowGif(false); // Hide the GIF animation
-        //videoRef.current.play(); // Play the video
-    };
-
     useEffect(() => {
-        setCurrentGifIndex(numbers[0]);
-    }, [numbers]);
+        let timeout;
+        if (showGif && gifIndex < numbers.length) {
+            timeout = setTimeout(() => {
+                setGifIndex(gifIndex + 1);
+            }, 2500);
+        } else if (gifIndex >= numbers.length) {
+            setShowGif(false);
+            setIsVideoPlaying(false);
+        }
+        return () => clearTimeout(timeout);
+    }, [showGif, gifIndex, numbers]);
+
+    const handleVideoEnded = () => {
+        setIsVideoPlaying(false);
+        setGifIndex(0);
+        setShowGif(true);
+    };
+
+    const handleStartAnimation = () => {
+        setIsVideoPlaying(true);
+        setShowGif(false);
+        setGifIndex(0);
+    };
 
     return (
         <div className="app-container">
             <div>
-                {isVideoPlaying && (
+                {isVideoPlaying && !showGif && (
                     <video
                         ref={videoRef}
                         className="animation"
@@ -113,20 +89,26 @@ const Animation = ({ numbers }) => {
                     </video>
                 )}
 
-                {/* Display GIF if showGif state is true */}
-                {showGif && (
-                    <img src={gifSource[currentGifIndex]} alt="Animated GIF" className="animation" />
+                {showGif && gifIndex < numbers.length && (
+                    <img src={gifSource[numbers[gifIndex] - 1]} alt="Animated GIF" className="animation" />
                 )}
 
-                {/* Button to start the animation */}
-                <button onClick={handleStartAnimation}>
-                    {isVideoPlaying ? 'Playing Video...' : 'Start Animation'}
+                <div className="lottery-bar">
+                    {numbers.map((number, index) => (
+                        <div key={index} className="circle">
+                            {gifIndex > index ? (
+                                <img src={gifSource[numbers[index] - 1]} alt={`GIF ${index + 1}`} className="gif" />
+                            ) : (
+                                <div className="circle"></div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                <button onClick={handleStartAnimation} disabled={isVideoPlaying || showGif}>
+                    {isVideoPlaying || showGif ? 'Playing Animation...' : 'Start Animation'}
                 </button>
             </div>
-            <div className="lottery-bar">
-
-            </div>
-
         </div>
     );
 };
