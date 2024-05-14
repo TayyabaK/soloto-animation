@@ -53,31 +53,35 @@ const Animation = ({ numbers }) => {
     const handleVideoEnded = () => {
         setIsVideoPlaying(false); // Pause the video
         setShowGif(true); // Show the GIF animation
-        setCurrentGifIndex(numbers[0] - 1);
+
+        setTimeout(() => {
+            setCurrentGifIndex(numbers[0] - 1);
+        }, 3000 * 1);
+
 
         setTimeout(() => {
             setCurrentGifIndex(numbers[1] - 1);
-        }, 2000 * 1);
+        }, 3000 * 2);
 
         setTimeout(() => {
             setCurrentGifIndex(numbers[2] - 1);
-        }, 2000 * 2);
+        }, 3000 * 3);
 
         setTimeout(() => {
             setCurrentGifIndex(numbers[3] - 1);
-        }, 2000 * 3);
+        }, 3000 * 4);
 
         setTimeout(() => {
             setCurrentGifIndex(numbers[4] - 1);
-        }, 2000 * 4);
+        }, 3000 * 5);
 
         setTimeout(() => {
             setCurrentGifIndex(numbers[5] - 1);
-        }, 2000 * 5);
+        }, 3000 * 6);
 
         setTimeout(() => {
-            setShowGif(false); // Hide the GIF animation
-        }, 2000 * 6);
+            setShowGif(false);
+        }, 3000 * 7);
 
     };
 
@@ -95,9 +99,6 @@ const Animation = ({ numbers }) => {
     return (
         <div className="app-container">
             <div>
-                <h1>Video and GIF Animation</h1>
-
-                {/* Display video if isVideoPlaying state is true */}
                 {isVideoPlaying && (
                     <video
                         ref={videoRef}
