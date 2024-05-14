@@ -43,7 +43,7 @@ const Animation = ({ numbers }) => {
 
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [showGif, setShowGif] = useState(false);
-    const [gifIndex, setGifIndex] = useState(0);
+    const [gifIndex, setGifIndex] = useState(-1);
 
     const videoRef = useRef(null);
 
@@ -51,7 +51,7 @@ const Animation = ({ numbers }) => {
         let timeout;
         if (showGif && gifIndex < numbers.length) {
             timeout = setTimeout(() => {
-                setGifIndex(gifIndex + 1);
+                setGifIndex(prevIndex => prevIndex + 1);
             }, 2500);
         } else if (gifIndex >= numbers.length) {
             setShowGif(false);
@@ -69,7 +69,10 @@ const Animation = ({ numbers }) => {
     const handleStartAnimation = () => {
         setIsVideoPlaying(true);
         setShowGif(false);
-        setGifIndex(0);
+        setGifIndex(-1);
+        if (videoRef.current) {
+            videoRef.current.play();
+        }
     };
 
     return (
@@ -89,14 +92,14 @@ const Animation = ({ numbers }) => {
                     </video>
                 )}
 
-                {showGif && gifIndex < numbers.length && (
+                {showGif && gifIndex < numbers.length && gifIndex >= 0 && (
                     <img src={gifSource[numbers[gifIndex] - 1]} alt="Animated GIF" className="animation" />
                 )}
 
                 <div className="lottery-bar">
                     {numbers.map((number, index) => (
                         <div key={index} className="circle">
-                            {gifIndex > index ? (
+                            {gifIndex >= index ? (
                                 <img src={gifSource[numbers[index] - 1]} alt={`GIF ${index + 1}`} className="gif" />
                             ) : (
                                 <div className="circle"></div>
