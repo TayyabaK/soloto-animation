@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Animation numbers={[20,13,6,5,4,10]} />
+    <Animation numbers={[4,8,13,17,23,29]} />
   </React.StrictMode>
 );
 
