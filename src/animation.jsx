@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css'; // Import your CSS file for styling
 
-import videoSource from './assets/soloto-machine.mp4'; // Import your video file
+import solotomachine from './assets/soloto-machine.gif'; // Import your video file
 
 import gif1 from './assets/1.gif'; // Import your GIF file
 import gif2 from './assets/2.gif'; // Import your GIF file
@@ -67,6 +67,7 @@ import png30 from './assets/30.png'; // Import your PNG file
 
 const Animation = ({ numbers }) => {
 
+
     const gifSource = [
         gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8, gif9, gif10,
         gif11, gif12, gif13, gif14, gif15, gif16, gif17, gif18, gif19, gif20,
@@ -78,6 +79,10 @@ const Animation = ({ numbers }) => {
         png11, png12, png13, png14, png15, png16, png17, png18, png19, png20,
         png21, png22, png23, png24, png25, png26, png27, png28, png29, png30
     ];
+
+    const gifSequence = [solotomachine, gifSource[numbers[0] - 1], gifSource[numbers[1] - 1],
+        gifSource[numbers[2] - 1], gifSource[numbers[3] - 1], gifSource[numbers[4] - 1], gifSource[numbers[5] - 1]];
+
 
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [showGif, setShowGif] = useState(false);
@@ -95,73 +100,66 @@ const Animation = ({ numbers }) => {
             const img = new Image();
             img.src = src;
         });
+        setShowGif(true);
+        setGifIndex(-1);
     }, []);
 
     useEffect(() => {
         let timeout;
         if (showGif && gifIndex < numbers.length) {
-            timeout = setTimeout(() => {
-                setGifIndex(prevIndex => prevIndex + 1);
-            }, 1500);
+            if (gifIndex == -1) {
+                timeout = setTimeout(() => {
+                    setGifIndex(prevIndex => prevIndex + 1);
+                }, 4500);
+            }
+            else {
+                timeout = setTimeout(() => {
+                    setGifIndex(prevIndex => prevIndex + 1);
+                }, 1500);
+            }
         } else if (gifIndex >= numbers.length) {
             setShowGif(false);
-            setIsVideoPlaying(false);
         }
         return () => clearTimeout(timeout);
     }, [gifIndex, showGif, numbers]);
 
-    const handleVideoEnded = () => {
-        setIsVideoPlaying(false);
-        setGifIndex(-1);
-        setShowGif(true);
-    };
 
     const handleStartAnimation = () => {
-        setIsVideoPlaying(true);
-        setShowGif(false);
+        setShowGif(true);
         setGifIndex(-1)
-        if (videoRef.current) {
-            videoRef.current.play();
-        }
+
     };
 
     return (
         <div className="app-container">
             <div>
-                {isVideoPlaying && !showGif && (
-                    <video
-                        ref={videoRef}
-                        className="animation"
-                        src={videoSource}
-                        type="video/mp4"
-                        autoPlay
-                        muted
-                        onEnded={handleVideoEnded}
-                    >
-                        Your browser does not support the video tag.
-                    </video>
-                )}
+                {
+                    showGif && gifIndex === -1 ?
+                        (<img src={solotomachine} alt="Soloto Machine" />)
+                        :
+                        ((gifIndex < numbers.length) && <img src={gifSource[numbers[gifIndex] - 1]} />)
+                }
 
-                {showGif && gifIndex < numbers.length && gifIndex >= 0 && (
-                    <img src={gifSource[numbers[gifIndex] - 1]} alt="Animated GIF" className="animation" />
-                )}
-
-                <div className="lottery-bar">
-                    {numbers.map((number, index) => (
-                        <div key={index} className="circle" style={{ backgroundColor: "#543E6B" }}>                            {gifIndex >= index ? (
-                            <img src={pngSource[numbers[index] - 1]} alt={`PNG ${index + 1}`} />
-                        ) : (
-                            <div className="circle"></div>
-                        )}
-                        </div>
-                    ))}
+                <div className="lottery-bar-container">
+                    <div className="lottery-bar">
+                        {numbers.map((number, index) => (
+                            <div key={index} className="circle" style={{ backgroundColor: "#543E6B" }}>
+                                {gifIndex >= index ? (
+                                    <img src={pngSource[numbers[index] - 1]} alt={`PNG ${index + 1}`} />
+                                ) : (
+                                    <div className="circle"></div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                <button onClick={handleStartAnimation} disabled={isVideoPlaying || showGif}>
-                    {isVideoPlaying || showGif ? 'Playing Animation...' : 'Start Animation'}
+                <button onClick={handleStartAnimation} disabled={showGif}>
+                    {showGif ? 'Playing Animation...' : 'Start Animation'}
                 </button>
             </div>
         </div>
+
     );
 };
 
