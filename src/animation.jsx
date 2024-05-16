@@ -148,12 +148,11 @@ const Animation = ({ numbers }) => {
 
                 <div className="lottery-bar">
                     {numbers.map((number, index) => (
-                        <div key={index} className="circle">
-                            {gifIndex >= index ? (
-                                <img src={pngSource[numbers[index] - 1]} alt={`PNG ${index + 1}`} />
-                            ) : (
-                                <div className="circle"></div>
-                            )}
+                        <div key={index} className="circle" style={{ backgroundColor: "#543E6B" }}>                            {gifIndex >= index ? (
+                            <img src={pngSource[numbers[index] - 1]} alt={`PNG ${index + 1}`} />
+                        ) : (
+                            <div className="circle"></div>
+                        )}
                         </div>
                     ))}
                 </div>
